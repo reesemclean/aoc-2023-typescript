@@ -28,11 +28,6 @@ if (!day) {
   process.exit(1);
 }
 
-const inputPath = test
-  ? `./src/day-${day}/input-sample.txt`
-  : `./src/day-${day}/input.txt`;
-const input = await readFile(inputPath, 'utf8');
-
 const {
   solvePartOne,
   solvePartTwo,
@@ -49,11 +44,16 @@ if (!part || part === '1') {
 
   checkSolverFunctionOrExit(solvePartOne);
 
+  const inputPath = test
+    ? `./src/day-${day}/input-sample-part-1.txt`
+    : `./src/day-${day}/input.txt`;
+  const input = await readFile(inputPath, 'utf8');
+
   console.time('Duration');
   const partOneAnswer = await solvePartOne(input);
 
   if (test) {
-    assertTestResult(partOneAnswer, expectedPartOneSampleOutput);
+    assertTestResult(partOneAnswer, expectedPartOneSampleOutput, '1');
   } else {
     console.log(`Answer: ${partOneAnswer}`);
   }
@@ -74,11 +74,16 @@ if (!part || part === '2') {
 
   checkSolverFunctionOrExit(solvePartTwo);
 
+  const inputPath = test
+    ? `./src/day-${day}/input-sample-part-2.txt`
+    : `./src/day-${day}/input.txt`;
+  const input = await readFile(inputPath, 'utf8');
+
   console.time('Duration');
   const partTwoAnswer = await solvePartTwo(input);
 
   if (test) {
-    assertTestResult(partTwoAnswer, expectedPartTwoSampleOutput);
+    assertTestResult(partTwoAnswer, expectedPartTwoSampleOutput, '2');
   } else {
     console.log(`Answer: ${partTwoAnswer}`);
   }
@@ -86,14 +91,14 @@ if (!part || part === '2') {
   console.timeEnd('Duration');
 }
 
-function assertTestResult(actual: unknown, expected: unknown) {
+function assertTestResult(actual: unknown, expected: unknown, part: string) {
   if (actual === expected) {
     console.log(
-      `Day ${day}, part 1 test passed! Expected: "${expected}", actual: "${actual}"`,
+      `Day ${day}, part ${part} test passed! Expected: "${expected}", actual: "${actual}"`,
     );
   } else {
     console.error(
-      `Day ${day}, part 1 test failed! Expected: "${expected}", actual: "${actual}"`,
+      `Day ${day}, part ${part} test failed! Expected: "${expected}", actual: "${actual}"`,
     );
   }
 }
