@@ -44,8 +44,8 @@ export function solvePartTwo(input: string): string {
   const lines = input.split('\n');
 
   const powers: number[] = lines.map((line) => {
-    const [game, rest] = line.split(': ');
-    const gameSets = rest.split('; ');
+    const gameData = line.split(': ')[1];
+    const gameSets = gameData.split('; ');
     let minRed = 0,
       minGreen = 0,
       minBlue = 0;
