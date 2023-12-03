@@ -1,5 +1,6 @@
 import { parseArgs } from 'node:util';
 import { readFile } from 'fs/promises';
+import { stdin, stdout } from 'process';
 
 const {
   values: { day, part, test },
