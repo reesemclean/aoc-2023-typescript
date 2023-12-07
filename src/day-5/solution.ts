@@ -184,8 +184,6 @@ export function solvePartTwo(input: string): string {
     currentValues = transformedRanges;
   }
 
-  console.log({ currentValues });
-
   const min = currentValues.reduce((prev, curr) => {
     return Math.min(prev, curr.start);
   }, Infinity);
