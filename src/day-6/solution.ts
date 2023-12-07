@@ -55,8 +55,6 @@ export function solvePartTwo(input: string): string {
     10,
   );
 
-  let numberOfWinningTimes = 0;
-
   let lowGuess = 0;
   let highGuess = time;
 

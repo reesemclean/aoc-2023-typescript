@@ -1,5 +1,3 @@
-import * as assert from 'assert';
-
 export const expectedPartOneSampleOutput = '35';
 
 interface Mapping {
@@ -85,10 +83,9 @@ function mapSourceToDestination({
   sourceValue: number;
   mapping: Mapping;
 }): number {
-  let found = false;
   let mapIndex = 0;
 
-  while (!found && mapIndex < mapping.maps.length) {
+  while (mapIndex < mapping.maps.length) {
     const map = mapping.maps[mapIndex];
 
     if (isInRange(map.sourceRange.start, map.sourceRange.length, sourceValue)) {
@@ -196,16 +193,6 @@ export function solvePartTwo(input: string): string {
   return min.toString();
 }
 
-// Expected output:
-// 79 14 original
-// 81 14 soil
-// 81 14 fertilizer
-// 81 14 water
-// 74 14 light
-// 74 3 -> 78 3, 77 11 -> 45 11 temperature
-// 46 11, 78 3 humidity
-// 56 1 -> 60 1, 46 10, 82 3 location
-
 function splitRangeForMapping(
   range: ValueRange,
   sourceRange: ValueRange,
@@ -301,72 +288,6 @@ function splitRangeForMapping(
 // const testSixActual = splitRangeForMapping(testRange, testSourceRangeSix);
 // const testSixExpected = [{ start: 10, length: 10 }];
 // assert.deepStrictEqual(testSixActual, testSixExpected);
-
-function mapSourceToDestinations({
-  sourceRange,
-  mapping,
-}: {
-  sourceRange: ValueRange;
-  mapping: Mapping;
-}): ValueRange[] {
-  const mappedRanges: ValueRange[] = [];
-  let rangesLeftToMap: ValueRange[] = [sourceRange];
-
-  for (const map of mapping.maps) {
-    let currentRoundRanges: ValueRange[] = rangesLeftToMap.slice();
-    let nextRoundRanges: ValueRange[] = [];
-
-    for (const range of currentRoundRanges) {
-      if (!rangesIntersect(range, map.sourceRange)) {
-        nextRoundRanges.push(range);
-        continue;
-      }
-
-      const intersectionStart = Math.max(range.start, map.sourceRange.start);
-      const intersectionEnd = Math.min(
-        range.start + range.length,
-        map.sourceRange.start + map.sourceRange.length,
-      );
-
-      mappedRanges.push({
-        start: map.destinationStart - map.sourceRange.start + intersectionStart,
-        length: intersectionEnd - intersectionStart,
-      });
-
-      // 74 start 14 long (74 - 88) (range)
-      // 76 start 10 long (76 - 86) (map.sourceRange)
-      // 74 start 2 long (74 - 76) (intersection) AND 87 start 1 long (87 - 88) (intersection)
-
-      if (range.start < map.sourceRange.start) {
-        nextRoundRanges.push({
-          start: range.start,
-          length: map.sourceRange.start - range.start,
-        });
-      }
-
-      if (
-        range.start + range.length >
-        map.sourceRange.start + map.sourceRange.length
-      ) {
-        nextRoundRanges.push({
-          start: map.sourceRange.start + map.sourceRange.length,
-          length:
-            range.start +
-            range.length -
-            (map.sourceRange.start + map.sourceRange.length),
-        });
-      }
-    }
-
-    rangesLeftToMap = nextRoundRanges.slice();
-  }
-
-  for (const leftoverRange of rangesLeftToMap) {
-    mappedRanges.push(leftoverRange);
-  }
-
-  return mappedRanges;
-}
 
 function rangesIntersect(a: ValueRange, b: ValueRange): boolean {
   return a.start + a.length > b.start && b.start + b.length > a.start;
