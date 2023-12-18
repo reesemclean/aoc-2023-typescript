@@ -1,3 +1,5 @@
+import { solveDay10Part2 } from './solution-part-2';
+
 export const expectedPartOneSampleOutput = '4';
 
 type TileType =
@@ -128,14 +130,14 @@ function startingTileType(
     return 'horizontal';
   }
 
-  if (first.x < second.x) {
-    if (first.y < second.y) {
+  if (first.x > second.x) {
+    if (first.y > second.y) {
       return 's-w';
     } else {
       return 'n-w';
     }
   } else {
-    if (first.y < second.y) {
+    if (first.y > second.y) {
       return 's-e';
     } else {
       return 'n-e';
@@ -156,28 +158,24 @@ function nextPositionsFromStart(grid: Grid): [Position, Position] {
   const aboveTileType = tileTypeAt(grid, above);
 
   if (aboveTileType === 'vertical' || aboveTileType?.includes('s-')) {
-    console.log('Using above tile');
     positions.push(above);
   }
 
   const belowTileType = tileTypeAt(grid, below);
 
   if (belowTileType === 'vertical' || belowTileType?.includes('n-')) {
-    console.log('Using below tile');
     positions.push(below);
   }
 
   const leftTileType = tileTypeAt(grid, left);
 
   if (leftTileType === 'horizontal' || leftTileType?.includes('-e')) {
-    console.log('Using left tile');
     positions.push(left);
   }
 
   const rightTileType = tileTypeAt(grid, right);
 
   if (rightTileType === 'horizontal' || rightTileType?.includes('-w')) {
-    console.log('Using right tile');
     positions.push(right);
   }
 
@@ -230,7 +228,7 @@ export function solvePartOne(input: string): string {
   return (steps / 2).toString();
 }
 
-export const expectedPartTwoSampleOutput = '';
+export const expectedPartTwoSampleOutput = '4';
 
 type GroundAreaType =
   | 'inside'
@@ -240,6 +238,29 @@ type GroundAreaType =
   | 'part-of-loop-v'
   | 'part-of-loop-h'
   | 'not-part-of-loop';
+
+function convertBackToOriginal(
+  tile: TileType,
+): 'J' | 'L' | '7' | 'F' | '.' | '|' | '-' {
+  switch (tile) {
+    case 'ground':
+      return '.';
+    case 'horizontal':
+      return '-';
+    case 'n-e':
+      return 'L';
+    case 'n-w':
+      return 'J';
+    case 's-e':
+      return 'F';
+    case 's-w':
+      return '7';
+    case 'vertical':
+      return '|';
+    default:
+      throw new Error(`Unknown tile type ${tile}`);
+  }
+}
 
 export function solvePartTwo(input: string): string {
   const grid = parseGrid(input);
@@ -263,8 +284,23 @@ export function solvePartTwo(input: string): string {
     position = next;
   }
 
-  let count = 0;
   const startTileType = startingTileType(grid);
+
+  const convertedGrid = grid.map((row) =>
+    row.map((tile) => {
+      switch (tile) {
+        case 'start':
+          return convertBackToOriginal(startTileType);
+        default:
+          return convertBackToOriginal(tile);
+      }
+    }),
+  );
+
+  return solveDay10Part2(convertedGrid, positionsPartOfLoop);
+
+  let count = 0;
+  // const startTileType = startingTileType(grid);
 
   for (let y = 0; y < grid.length; y++) {
     const row = grid[y];
